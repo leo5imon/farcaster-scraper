@@ -5,6 +5,7 @@ import { hideBin } from "yargs/helpers";
 import { fetchCastsHandler } from "./commands.js";
 
 yargs(hideBin(process.argv))
+  .version(false)
   .command({
     command: "fetch",
     describe: "Fetch Imgur URLs from Neynar API based on criteria",
