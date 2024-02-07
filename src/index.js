@@ -1,58 +1,8 @@
+import "dotenv/config";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 
-import "dotenv/config";
-
-let allImgurUrls = [];
-
-function fetchCasts({
-  apiKey,
-  channelId,
-  likeThreshold,
-  recastThreshold,
-  followerCountThreshold,
-  limit,
-  urlDomainFilter,
-  cursor = "",
-}) {
-  const options = {
-    method: "GET",
-    headers: { accept: "application/json", api_key: apiKey },
-  };
-
-  const cursorParam = cursor ? `&cursor=${encodeURIComponent(cursor)}` : "";
-  const url = `https://api.neynar.com/v2/farcaster/feed?feed_type=filter&filter_type=channel_id&channel_id=${channelId}&with_recasts=true&with_replies=false&limit=${limit}${cursorParam}`;
-
-  fetch(url, options)
-    .then((response) => response.json())
-    .then((data) => {
-      if (!data.casts || !Array.isArray(data.casts)) {
-        return;
-      }
-
-      const casts = data.casts;
-      const imgurUrls = casts
-        .filter((cast) => {
-          return (
-            (cast.reactions.likes.length > likeThreshold ||
-              cast.reactions.recasts.length > recastThreshold) &&
-            cast.author.follower_count > followerCountThreshold
-          );
-        })
-        .flatMap((cast) => cast.embeds ?? [])
-        .map((embed) => embed.url)
-        .filter((url) => url && url.includes(urlDomainFilter));
-
-      allImgurUrls = [...allImgurUrls, ...imgurUrls];
-
-      if (data.next && data.next.cursor) {
-        fetchCasts({ ...arguments[0], cursor: data.next.cursor });
-      } else {
-        console.log(allImgurUrls);
-      }
-    })
-    .catch((err) => console.error(err));
-}
+import { fetchCastsHandler } from "./commands.js";
 
 yargs(hideBin(process.argv))
   .command({
@@ -80,7 +30,7 @@ yargs(hideBin(process.argv))
         type: "number",
       },
       limit: {
-        default: 10,
+        default: 100,
         describe: "Fetch limit",
         type: "number",
       },
@@ -89,18 +39,16 @@ yargs(hideBin(process.argv))
         describe: "URL domain filter",
         type: "string",
       },
+      maxResults: {
+        describe: "Maximum number of results to fetch",
+        type: "number",
+      },
+      maxQueries: {
+        describe: "Maximum number of queries to make",
+        type: "number",
+      },
     },
-    handler: (argv) => {
-      fetchCasts({
-        apiKey: process.env.NEYNAR_API_KEY,
-        channelId: argv.channelId,
-        likeThreshold: argv.likeThreshold,
-        recastThreshold: argv.recastThreshold,
-        followerCountThreshold: argv.followerCountThreshold,
-        limit: argv.limit,
-        urlDomainFilter: argv.urlDomainFilter,
-      });
-    },
+    handler: fetchCastsHandler,
   })
   .demandCommand(1, "You must provide at least one command to execute")
   .help().argv;
