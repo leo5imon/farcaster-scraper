@@ -1,0 +1,17 @@
+{
+  "name": "neynar-scrape",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@neynar/nodejs-sdk": "^1.9.4",
+    "dotenv": "^16.4.1",
+    "express": "^4.18.2"
+  }
+}
