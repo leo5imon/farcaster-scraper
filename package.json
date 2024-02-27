@@ -1,14 +1,25 @@
 {
-  "name": "neynar-scrape",
-  "version": "1.0.0",
-  "description": "",
+  "name": "farcaster-scrape",
+  "version": "1.0.1",
+  "description": "Powerful CLI tool leverages the Neynar API to dive into the depths of Farcaster",
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/leo5imon/farcaster-scraper"
+  },
+  "keywords": [
+    "react",
+    "cli",
+    "farcaster",
+    "farcaster kit"
+  ],
   "type": "module",
-  "author": "",
+  "author": "leo5imon",
+  "homepage": "https://github.com/leo5imon/farcaster-scraper",
   "license": "ISC",
   "dependencies": {
     "@clack/prompts": "^0.7.0",
